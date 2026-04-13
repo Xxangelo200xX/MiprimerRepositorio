@@ -1,0 +1,62 @@
+<div class="container mt-4">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 rounded">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">📦 Mis Pedidos</a>
+      <div class="d-flex">
+        <button class="btn btn-outline-light me-2" (click)="seguirComprando()">🛍️ Seguir comprando</button>
+        <button class="btn btn-outline-danger" (click)="cerrarSesion()">🚪 Cerrar Sesión</button>
+      </div>
+    </div>
+  </nav>
+
+  <div *ngIf="errorMensaje" class="alert alert-danger">{{ errorMensaje }}</div>
+
+  <div *ngIf="cargando" class="text-center py-5">
+    <div class="spinner-border text-primary"></div>
+    <p>Cargando pedidos...</p>
+  </div>
+
+  <div *ngIf="!cargando && pedidos.length === 0" class="alert alert-info text-center">
+    <h5>📭 No tienes pedidos aún</h5>
+    <button class="btn btn-primary mt-3" (click)="seguirComprando()">Ir a comprar</button>
+  </div>
+
+  <div *ngIf="!cargando && pedidos.length > 0">
+    <div class="alert alert-success">✅ {{ pedidos.length }} pedido(s) encontrado(s)</div>
+
+    <div *ngFor="let pedido of pedidos" class="order-card mb-4">
+      <div class="order-header">
+        <div class="row">
+          <div class="col-md-3"><strong>Pedido:</strong> {{ pedido._id | slice:0:8 }}...</div>
+          <div class="col-md-3"><strong>Fecha:</strong> {{ formatearFecha(pedido.createdAt) }}</div>
+          <div class="col-md-3"><strong>Total:</strong> ${{ pedido.total }}</div>
+          <div class="col-md-3"><strong>Estado:</strong> <span [class]="getEstadoClass(pedido.estado)">{{ pedido.estado }}</span></div>
+        </div>
+      </div>
+      <div class="order-body mt-3">
+        <table class="table table-bordered">
+          <thead class="table-dark">
+            <tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Subtotal</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of pedido.productos">
+              <td>{{ item.producto?.nombre || 'Producto' }}</td>
+              <td class="text-center">{{ item.cantidad }}</td>
+              <td>${{ item.precio }}</td>
+              <td>${{ (item.cantidad * item.precio).toFixed(2) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="order-footer mt-2" *ngIf="esAdmin">
+        <select class="form-select" [value]="pedido.estado" (change)="actualizarEstado(pedido._id, $any($event.target).value)">
+          <option value="pendiente">Pendiente</option>
+          <option value="pagado">Pagado</option>
+          <option value="enviado">Enviado</option>
+          <option value="entregado">Entregado</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>

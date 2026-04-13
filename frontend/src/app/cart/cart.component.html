@@ -1,0 +1,87 @@
+<div class="container mt-4">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 rounded">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">🛒 Mi Carrito</a>
+      <div class="d-flex">
+        <button class="btn btn-outline-light" (click)="seguirComprando()">🛍️ Seguir comprando</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mensaje -->
+  <div *ngIf="mensaje" class="toast-message">{{ mensaje }}</div>
+
+  <!-- Cargando -->
+  <div *ngIf="cargando" class="text-center py-5">
+    <div class="spinner-border text-primary"></div>
+    <p>Cargando carrito...</p>
+  </div>
+
+  <!-- Carrito vacío -->
+  <div *ngIf="!cargando && carrito.productos.length === 0" class="alert alert-info text-center">
+    <h5>🛒 Tu carrito está vacío</h5>
+    <button class="btn btn-primary mt-3" (click)="seguirComprando()">Ir a comprar</button>
+  </div>
+
+  <!-- Carrito con productos -->
+  <div *ngIf="!cargando && carrito.productos.length > 0">
+    <div class="alert alert-success">✅ Tienes {{ carrito.productos.length }} producto(s) en tu carrito</div>
+
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-body">
+            <div *ngFor="let item of carrito.productos" class="cart-item mb-3">
+              <div class="row align-items-center">
+                <div class="col-md-5">
+                  <h5>{{ item.producto?.nombre || 'Producto' }}</h5>
+                  <p class="text-muted">${{ item.producto?.precio || 0 }} c/u</p>
+                </div>
+                <div class="col-md-3">
+                  <div class="input-group" style="width: 120px;">
+                    <button class="btn btn-outline-secondary" (click)="actualizarCantidad(item.producto?._id, (item.cantidad || 0) - 1)">-</button>
+                    <input type="text" class="form-control text-center" [value]="item.cantidad || 0" readonly>
+                    <button class="btn btn-outline-secondary" (click)="actualizarCantidad(item.producto?._id, (item.cantidad || 0) + 1)">+</button>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <h5 class="text-primary">${{ ((item.producto?.precio || 0) * (item.cantidad || 0)).toFixed(2) }}</h5>
+                </div>
+                <div class="col-md-1">
+                  <button class="btn btn-danger btn-sm" (click)="eliminarProducto(item.producto?._id)">🗑️</button>
+                </div>
+              </div>
+              <hr>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header bg-success text-white">
+            <h4>Resumen</h4>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <span>Subtotal:</span>
+              <strong>${{ total.toFixed(2) }}</strong>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span>Envío:</span>
+              <strong>Gratis</strong>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+              <h5>Total:</h5>
+              <h5 class="text-success">${{ total.toFixed(2) }}</h5>
+            </div>
+            <button class="btn btn-success w-100 mt-3" (click)="realizarPedido()" [disabled]="cargando">✅ Realizar Pedido</button>
+            <button class="btn btn-danger w-100 mt-2" (click)="vaciarCarrito()">🗑️ Vaciar Carrito</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

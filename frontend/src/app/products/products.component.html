@@ -1,0 +1,83 @@
+<div class="container mt-4">
+  <!-- DEPURACIÓN -->
+  <div class="alert alert-info">
+    <strong>🔍 Estado:</strong><br>
+    📦 Productos: {{ productos.length }}<br>
+    👤 Usuario: {{ usuario?.email || 'No hay usuario' }}<br>
+    👑 Admin: {{ esAdmin ? 'SÍ' : 'NO' }}
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 rounded">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">🛒 Mi Tienda</a>
+      <div class="d-flex">
+    <button class="btn btn-outline-info me-2" *ngIf="esAdmin" routerLink="/admin/categorias">
+  📁 Categorías
+</button>
+        <button class="btn btn-outline-light me-2" (click)="irAPedidos()">📦 Mis Pedidos</button>
+        <button class="btn btn-outline-light me-2" (click)="irAlCarrito()">🛍️ Carrito ({{ carrito.length }})</button>
+        <button class="btn btn-outline-danger" (click)="logout()">🚪 Cerrar Sesión</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mensaje flotante -->
+  <div *ngIf="mensaje" class="toast-message">{{ mensaje }}</div>
+
+  <!-- Botón crear producto (solo admin) -->
+  <div class="mb-3" *ngIf="esAdmin">
+    <button class="btn btn-success" (click)="abrirCrearProducto()">
+      + Nuevo Producto
+    </button>
+  </div>
+
+  <!-- Sin productos -->
+  <div *ngIf="productos.length === 0" class="alert alert-warning text-center">
+    <h5>⚠️ No hay productos disponibles</h5>
+    <p *ngIf="esAdmin">Haz clic en "Nuevo Producto" para agregar.</p>
+  </div>
+
+  <!-- Grid de productos -->
+  <div class="row">
+    <div class="col-md-4 mb-4" *ngFor="let producto of productos">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ producto.nombre }}</h5>
+          <p class="card-text text-muted">{{ producto.descripcion || 'Sin descripción' }}</p>
+          <h4 class="text-primary">${{ producto.precio }}</h4>
+          <p class="text-secondary">Stock: {{ producto.stock }}</p>
+        </div>
+        <div class="card-footer bg-white border-top-0">
+          <button class="btn btn-primary w-100" (click)="agregarAlCarrito(producto._id, producto.nombre)">
+            🛒 Agregar al carrito
+          </button>
+          <div class="mt-2" *ngIf="esAdmin">
+            <button class="btn btn-warning btn-sm me-2" (click)="abrirEditarProducto(producto)">✏️ Editar</button>
+            <button class="btn btn-danger btn-sm" (click)="eliminarProducto(producto._id, producto.nombre)">🗑️ Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear/editar producto -->
+<div *ngIf="mostrarModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5>{{ modalTitulo }}</h5>
+      <button class="btn-close" (click)="cerrarModal()">✖</button>
+    </div>
+    <div class="modal-body">
+      <input class="form-control mb-2" placeholder="Nombre" [(ngModel)]="productoModal.nombre">
+      <input class="form-control mb-2" type="number" placeholder="Precio" [(ngModel)]="productoModal.precio">
+      <input class="form-control mb-2" type="number" placeholder="Stock" [(ngModel)]="productoModal.stock">
+      <textarea class="form-control mb-2" placeholder="Descripción" [(ngModel)]="productoModal.descripcion"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn btn-primary" (click)="guardarProducto()">Guardar</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+<div class="container mt-4">
+  <h2>📁 Administrar Categorías</h2>
+  
+  <!-- Mensaje -->
+  <div *ngIf="mensaje" class="alert alert-info mt-2">{{ mensaje }}</div>
+
+  <!-- Crear nueva categoría -->
+  <div class="card mb-4 mt-3">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">➕ Crear Nueva Categoría</h5>
+    </div>
+    <div class="card-body">
+      <div class="input-group">
+        <input type="text" class="form-control" [(ngModel)]="nuevaCategoria" placeholder="Nombre de la categoría (ej: Electrónica, Ropa, Hogar)">
+        <button class="btn btn-success" (click)="crearCategoria()" [disabled]="!nuevaCategoria.trim()">
+          Crear
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de categorías -->
+  <div class="card">
+    <div class="card-header bg-secondary text-white">
+      <h5 class="mb-0">📋 Lista de Categorías ({{ categorias.length }})</h5>
+    </div>
+    <div class="card-body">
+      <div *ngIf="categorias.length === 0" class="alert alert-warning text-center">
+        No hay categorías. Crea una usando el formulario arriba.
+      </div>
+      
+      <ul class="list-group">
+        <li *ngFor="let cat of categorias" class="list-group-item">
+          <div *ngIf="editando?._id !== cat._id" class="d-flex justify-content-between align-items-center">
+            <span><strong>{{ cat.nombre }}</strong></span>
+            <div>
+              <button class="btn btn-warning btn-sm me-2" (click)="iniciarEdicion(cat)">✏️ Editar</button>
+              <button class="btn btn-danger btn-sm" (click)="eliminarCategoria(cat._id, cat.nombre)">🗑️ Eliminar</button>
+            </div>
+          </div>
+          <div *ngIf="editando?._id === cat._id" class="d-flex gap-2">
+            <input type="text" class="form-control" [(ngModel)]="editando.nombre">
+            <button class="btn btn-success btn-sm" (click)="guardarEdicion()">💾 Guardar</button>
+            <button class="btn btn-secondary btn-sm" (click)="cancelarEdicion()">❌ Cancelar</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Botón para volver -->
+  <div class="mt-4 text-center">
+    <button class="btn btn-secondary" routerLink="/products">⬅️ Volver a la tienda</button>
+  </div>
+</div>

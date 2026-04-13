@@ -1,0 +1,11 @@
+.card {
+  border-radius: 10px;
+}
+
+.btn-success {
+  transition: 0.3s;
+}
+
+.btn-success:hover {
+  background-color: #1e7e34;
+}
